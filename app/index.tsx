@@ -8,12 +8,10 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  SafeAreaView,
 } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { getTrainStatus, TrainEvent, TrainStatus } from './services/api';
+import { getTrainStatus, TrainEvent, TrainStatus } from '../services/api';
 
-export default function App() {
+export default function HomeScreen() {
   const [trainNumber, setTrainNumber] = useState('');
   const [trainData, setTrainData] = useState<TrainStatus | null>(null);
   const [loading, setLoading] = useState(false);
@@ -69,73 +67,80 @@ export default function App() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-
-      <View style={styles.inner}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.appName}>ChukChuk 🚂</Text>
-          <Text style={styles.tagline}>हर train की आवाज़</Text>
-        </View>
-
-        {/* Search */}
-        <View style={styles.searchRow}>
-          <TextInput
-            style={styles.input}
-            placeholder="Train number (e.g. 12951)"
-            placeholderTextColor="#666"
-            keyboardType="numeric"
-            maxLength={5}
-            value={trainNumber}
-            onChangeText={setTrainNumber}
-            onSubmitEditing={handleSearch}
-          />
-          <TouchableOpacity
-            style={styles.searchButton}
-            onPress={handleSearch}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.searchButtonText}>Track</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Loading */}
-        {loading && (
-          <ActivityIndicator size="large" color="#E63946" style={{ marginTop: 40 }} />
-        )}
-
-        {/* Results */}
-        {trainData && (
-          <View style={styles.results}>
-            <View style={styles.trainHeader}>
-              <Text style={styles.trainNumber}>Train {trainData.train_number}</Text>
-              {trainData.start_date && (
-                <Text style={styles.startDate}>Journey: {trainData.start_date}</Text>
-              )}
-              {trainData.last_update && (
-                <Text style={styles.lastUpdate}>
-                  Updated: {new Date(trainData.last_update).toLocaleTimeString('en-IN', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </Text>
-              )}
-            </View>
-
-            <FlatList
-              data={trainData.events}
-              keyExtractor={(_, i) => i.toString()}
-              renderItem={renderEvent}
-              ListEmptyComponent={
-                <Text style={styles.noEvents}>No events found for today yet.</Text>
-              }
-              contentContainerStyle={{ paddingBottom: 40 }}
-            />
-          </View>
-        )}
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.appName}>ChukChuk 🚂</Text>
+        <Text style={styles.tagline}>हर train की आवाज़</Text>
       </View>
-    </SafeAreaView>
+
+      {/* Search */}
+      <View style={styles.searchRow}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter train number (e.g. 12951)"
+          placeholderTextColor="#999"
+          keyboardType="numeric"
+          maxLength={5}
+          value={trainNumber}
+          onChangeText={setTrainNumber}
+          onSubmitEditing={handleSearch}
+        />
+        <TouchableOpacity
+          style={styles.searchButton}
+          onPress={handleSearch}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.searchButtonText}>Track</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Loading */}
+      {loading && (
+        <ActivityIndicator
+          size="large"
+          color="#E63946"
+          style={{ marginTop: 40 }}
+        />
+      )}
+
+      {/* Results */}
+      {trainData && (
+        <View style={styles.results}>
+          <View style={styles.trainHeader}>
+            <Text style={styles.trainNumber}>
+              Train {trainData.train_number}
+            </Text>
+            {trainData.start_date && (
+              <Text style={styles.startDate}>
+                Journey: {trainData.start_date}
+              </Text>
+            )}
+            {trainData.last_update && (
+              <Text style={styles.lastUpdate}>
+                Updated:{' '}
+                {new Date(trainData.last_update).toLocaleTimeString('en-IN', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </Text>
+            )}
+          </View>
+
+          <FlatList
+            data={trainData.events}
+            keyExtractor={(_, i) => i.toString()}
+            renderItem={renderEvent}
+            ListEmptyComponent={
+              <Text style={styles.noEvents}>
+                No events found for today yet.
+              </Text>
+            }
+            contentContainerStyle={{ paddingBottom: 40 }}
+          />
+        </View>
+      )}
+    </View>
   );
 }
 
@@ -143,11 +148,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0F0F0F',
-  },
-  inner: {
-    flex: 1,
+    paddingTop: 60,
     paddingHorizontal: 20,
-    paddingTop: 20,
   },
   header: {
     marginBottom: 28,
